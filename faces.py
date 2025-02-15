@@ -1,9 +1,15 @@
 import cv2;
+import pickle;
+import numpy as np;
+import os;
+
 video = cv2.VideoCapture(0);
 face_detect = cv2.CascadeClassifier('data/haarcascade_frontalface_default.xml');
 
 faces_data=[]
 i=0;
+
+name = input("Enter your name:");
 
 while True:
     ret,frame  = video.read();
@@ -23,3 +29,18 @@ while True:
         break;
 video.release();
 cv2.destroyAllWindows();
+
+faces_data = np.asarray(faces_data);
+faces_data = faces_data.reshape(100,-1);
+
+if 'names.pkl' not in os.listdir('data/'):
+    names = [name]*100;
+    with open('data/names.pkl') as f:
+        pickle.dump(names, f)
+else: 
+    with open('data/names.pkl') as f:
+        names =pickle.load(f);
+    names = names + [name]*100;
+    with open('data/names.pkl') as f:
+        pickle.dump(names, f)
+
