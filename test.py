@@ -15,6 +15,9 @@ with open('data/faces_data.pkl' , 'rb')  as f:
     Faces = pickle.load(f);
 
 knn = KNeighborsClassifier(n_neighbors=5);
+min_length = min(len(Faces),len(Labels));
+Faces = Faces[:min_length];
+Labels = Labels[:min_length];
 knn.fit(Faces,Labels);
 
 COL_Name = ["Name" , "Time"];
