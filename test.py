@@ -7,19 +7,16 @@ import csv;
 import time;
 from datetime import datetime;
 
-video = cv2.VideoCapture(0);
-face_detect = cv2.CascadeClassifier('data/haarcascade_frontalface_default.xml');
 with open('data/names.pkl' , 'rb')  as f:
     Labels = pickle.load(f);
 with open('data/faces_data.pkl' , 'rb')  as f:
     Faces = pickle.load(f);
 
 knn = KNeighborsClassifier(n_neighbors=5);
-min_length = min(len(Faces),len(Labels));
-Faces = Faces[:min_length];
-Labels = Labels[:min_length];
 knn.fit(Faces,Labels);
 
+video = cv2.VideoCapture(0);
+face_detect = cv2.CascadeClassifier('data/haarcascade_frontalface_default.xml');
 COL_Name = ["Name" , "Time"];
 while True:
     ret,frame  = video.read();
@@ -28,18 +25,26 @@ while True:
     for (x,y,w,h) in faces :
         crop_image = frame[y:y+h , x:x+w,:];
         resized_image = cv2.resize(crop_image,(50,50)).flatten().reshape(1,-1);
-        output = knn.predict(resized_image);
+
+        distances, indices = knn.kneighbors(resized_image);
+        if distances[0][0] > 5300:  
+            output = "Unknown"
+        else:
+            output = knn.predict(resized_image)[0];
+        
         ts = time.time();
         date = datetime.fromtimestamp(ts).strftime("  %d-%m-%y");
         Current_time = datetime.fromtimestamp(ts).strftime("%H:%M:%S");
-        attendance = [str(output[0]) , str(Current_time)];
+        attendance = [str(output) , str(Current_time)];
         file_exist = os.path.isfile("Attendance/Attendance_" + date + ".csv")
-        cv2.putText(frame,str(output[0]) , (x,y-15), cv2.FONT_HERSHEY_COMPLEX,1,(255,255,255) ,1);        
-        cv2.rectangle(frame, (x,y) , (x+w, y+h), (50,50,255) ,1);
+
+        color = (0, 255, 0) if output != "Unknown" else (0, 0, 255)
+        cv2.putText(frame,str(output) , (x,y-15), cv2.FONT_HERSHEY_COMPLEX,1,color ,1);        
+        cv2.rectangle(frame, (x,y) , (x+w, y+h), color ,1);
     cv2.imshow("Video capture",frame);
     w = cv2.waitKey(1);
     if w == ord('m'):
-        time.sleep(2);
+        time.sleep(1);
         if file_exist :
             with open("Attendance/Attendance_" + date + ".csv","+a") as csvfile:
                 writer = csv.writer(csvfile);

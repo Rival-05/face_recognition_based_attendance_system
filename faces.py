@@ -21,8 +21,8 @@ while True:
         if len(faces_data)<=100 and i%10 == 0:
             faces_data.append(resize_image);
         i += 1;
-        cv2.putText(frame, str(len(faces_data)) , (50,50) , cv2.FONT_HERSHEY_COMPLEX, 1 , (50,50,255) ,1);
-        cv2.rectangle(frame, (x,y) , (x+w, y+h), (50,50,255) ,1);
+        cv2.putText(frame, str(len(faces_data)) , (50,50) , cv2.FONT_HERSHEY_COMPLEX, 1 , (0,0,255) ,1);
+        cv2.rectangle(frame, (x,y) , (x+w, y+h), (0,0,255) ,1);
     cv2.imshow("Video capture",frame);
     w = cv2.waitKey(1);
     if w == ord('q') or len(faces_data) == 100:
@@ -40,7 +40,7 @@ if 'names.pkl' not in os.listdir('data/'):
 else: 
     with open('data/names.pkl' , 'rb') as f:
         names =pickle.load(f);
-    names = names + [name]*100;
+        names = names + [name]*100;
     with open('data/names.pkl' , 'wb') as f:
         pickle.dump(names, f)
 
@@ -50,6 +50,6 @@ if 'faces_data.pkl' not in os.listdir('data/'):
 else: 
     with open('data/faces_data.pkl','rb') as f:
         faces =pickle.load(f);
-    faces = np.append(faces,faces_data,axis =0);
+        faces = np.append(faces,faces_data,axis =0);
     with open('data/faces_data.pkl','wb') as f:
-        pickle.dump(faces_data, f);
+        pickle.dump(faces, f);
