@@ -38,7 +38,7 @@ while True:
         else:
             output = knn.predict(resized_image)[0]
 
-        last_output = output  # Save last detected person
+        last_output = output  
 
         ts = time.time()
         date = datetime.fromtimestamp(ts).strftime("%d-%m-%y")

@@ -19,7 +19,7 @@ def mark_attendance(name, date, time):
     result = cursor.fetchone()
     if result:
         conn.close()
-        return False  # Already marked
+        return False  
     cursor.execute("INSERT INTO attendance (name, date, time) VALUES (?, ?, ?)", (name, date, time))
     conn.commit()
     conn.close()
